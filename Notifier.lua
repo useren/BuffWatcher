@@ -88,47 +88,63 @@ function Notifier:NotifyToGrid(allcate_data,raidNotify,personNotify)
     end
 
     if(raidNotify) then
-        _G.SendChatMessage("=>>全团BUF分配<<=:",SendChannel,nil,nil)
+        -- _G.SendChatMessage("-----全团BUFF分配-----",SendChannel,nil,nil)
     end
 
 
     local allbuf = {
-        PriestBlood = "耐力精神",
+        PriestBlood = "【MS耐力精神】",
         --PriestSpirt = "精神",
-        MageIntelli = "智力",
-        DruidClaw   = "爪子",
-        Knight      = "骑士",
-        Warlock     = "术士"
+        MageIntelli = "【FS智力】",
+        DruidClaw   = "【XD爪子】",
+        Knight      = "【QS祝福】",
+        Warlock     = "【SS诅咒】"
     }
 
     local knight_to_cn = {["WangZhe"]="王者",["ZhengJiu"]="拯救",["GuangMing"]="光明",["LiLiang"]="力量",["BiHu"]="庇护",["ZhiHui"]="智慧"}
     local warlock_to_cn = {["LuMang"]="鲁莽",["YuanSu"]="元素",["YuYan"]="语言",["AnYing"]="暗影"}
 
+
     for bufe,bufc in pairs(allbuf) do
-        local str_to_raid = bufc .. ":"
+        local str_to_raid = bufc
         local sorted_array = resort_by_group(result_by_name[bufe])
+        local i = 1
+        local len = table.getn(sorted_array)
         for _,ngarray in pairs(sorted_array) do
             local name = ngarray["name"]
             local garray = ngarray["groups"]
-            local str_to_player = "BufferWatcher插件提示:" .. bufc .. " -> "
-            str_to_raid = str_to_raid .. "[" ..name .. " -> "
+            local str_to_player = "加Buff提示:" .. bufc
+            --str_to_raid = str_to_raid .. "[" ..name .. " -> "
+
+            local j = 1
+            local lenj = table.getn(garray)
             for _,gname in pairs(garray) do
                 local rgname = ""
                 if(bufe == "Knight") then
                     rgname = knight_to_cn[gname]
+                    if (j < lenj) then
+                        rgname = rgname .. "/"
+                    end
+                    j = j + 1
                 elseif(bufe == "Warlock") then
                     rgname = warlock_to_cn[gname]
                 else
                     rgname = gname
                 end
-                str_to_raid = str_to_raid .. rgname .. " "
-                str_to_player = str_to_player .. rgname .. " "
+                str_to_raid = str_to_raid .. rgname
+                str_to_player = str_to_player .. rgname
             end
-            str_to_raid = str_to_raid .. "]"
+            str_to_raid = str_to_raid .. "-" .. name
+            if (i < len) then
+                str_to_raid = str_to_raid .. "，"
+            end
+            i = i + 1
+            -- str_to_raid = str_to_raid .. "]"
+
             --_G.SendChatMessage(str_to_player,"WHISPER",nil,name)
             --_G.SendChatMessage(str_to_player,"SAY",nil,nil)
 
-            str_to_player = str_to_player .. "责任人:" .. name
+            str_to_player = str_to_player .. "-" .. name
             if(personNotify) then
                 _G.SendChatMessage(str_to_player,"WHISPER",nil,name)
             end
@@ -141,9 +157,9 @@ function Notifier:NotifyToGrid(allcate_data,raidNotify,personNotify)
 
     end
 
-    if(raidNotify) then
-        _G.SendChatMessage("=>>BuffWatcher<<=:",SendChannel,nil,nil)
-    end
+    -- if(raidNotify) then
+    --     _G.SendChatMessage("-----全团BUFF分配 以上-----",SendChannel,nil,nil)
+    -- end
 end
 
 -- 通报buf缺少情况
@@ -202,7 +218,7 @@ function Notifier:NotifyBufLack(buflack,tankHasZhengJiu,raidNotify,personNotify)
 
 
     if(raidNotify) then
-        _G.SendChatMessage("=>>全团BUF检查<<=:",SendChannel,nil,nil)
+        _G.SendChatMessage("----------全团BUF检查----------:",SendChannel,nil,nil)
     end
     local noProblem = true
     for i =1,8 do
@@ -249,7 +265,7 @@ function Notifier:NotifyBufLack(buflack,tankHasZhengJiu,raidNotify,personNotify)
 
     for _,name in pairs(tankHasZhengJiu) do
         local raidstr = name .. " 请点掉拯救"
-        local whisperstr = "BuffWatcher插件提醒:" .. name .. " 请点掉拯救"
+        local whisperstr = "提醒:" .. name .. " 请点掉拯救"
         if(raidNotify) then
             _G.SendChatMessage(raidstr,SendChannel,nil,nil)
         end
@@ -265,8 +281,8 @@ function Notifier:NotifyBufLack(buflack,tankHasZhengJiu,raidNotify,personNotify)
         _G.SendChatMessage("Buff全部正常",SendChannel,nil,nil)
 
     end
-    if(raidNotify) then
-        _G.SendChatMessage("=>>BuffWatcher<<=:",SendChannel,nil,nil)
-    end
+    -- if(raidNotify) then
+    --     _G.SendChatMessage("----------全团BUF检查结束----------:",SendChannel,nil,nil)
+    -- end
 
 end
