@@ -4,6 +4,7 @@ BuffWatcher = LibStub("AceAddon-3.0"):NewAddon("BuffWatcher","AceConsole-3.0","A
 local BuffWatcher = _G.BuffWatcher
 local BWMainWindow = _G.BWMainWindow
 local BWCheckPlayerWindow = _G.BWCheckPlayerWindow
+local BWTextWindow = _G.BWTextWindow
 local RaidInfo = _G.RaidInfo
 local PlayerClassEnum = _G.PlayerClassEnum
 local Notifier = _G.Notifier
@@ -123,6 +124,7 @@ function BuffWatcher:OnInitialize()
 	local factionGroup = UnitFactionGroup("player")
     BWMainWindow:CreateMainWindow(factionGroup)
 	BWCheckPlayerWindow:CreateWindow()
+	BWTextWindow:CreateWindow()
 	BWShortFrame:CreateMainWindow()
 
     BWMainWindow:RegistButtonCallBack(BuffWatcher.OnInitButtonCallBack,
@@ -138,6 +140,7 @@ function BuffWatcher:OnInitialize()
 	--BWMainWindow:SetAutoCheckInterval(BWMainWindow.db.profile.MainWindow.AutoCheck.Interval)
     BWMainWindow:Hide()
 	BWCheckPlayerWindow:Hide()
+	BWTextWindow:Hide()
 
 	BWMainWindow:SetShortFrameCheckBox(BWMainWindow.db.profile.MainWindow.ShortFrame.Show)
 
@@ -537,6 +540,10 @@ function BuffWatcher:OnMonitorButtonCallback()
 	end
 	BWMainWindow:SetMonitorStat(MonitorStat)
 end
+
+-- function BuffWatcher:OnTextButtonCallback()
+-- 	-- 加上弹框的逻辑
+-- end
 
 function BuffWatcher:ShortFrameUpdate()
 	--local groupnum = RaidInfo:GetGroupNum()

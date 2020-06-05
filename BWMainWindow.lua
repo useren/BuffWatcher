@@ -36,7 +36,8 @@ BWMainWindow = {
         RestButton = nil,
         NotifyButton = nil,
         AllocateButton = nil,
-        MonitorButton = nil
+        MonitorButton = nil,
+        TextButton = nil
     },
     Config = {
         NotifyCheckbox = {
@@ -68,7 +69,7 @@ function BWMainWindow:CreateMainWindow(Faction)
     frame:SetWidth(68*SCALE_LENGTH)
 
     if(Faction == "Alliance") then
-        frame:SetHeight(65*SCALE_LENGTH)
+        frame:SetHeight(70*SCALE_LENGTH)
     elseif(Faction == "Horde")   then
         frame:SetHeight(55*SCALE_LENGTH)
     end
@@ -170,8 +171,14 @@ function BWMainWindow:CreateBufGroup(bufname)
     BloodGroup:SetLayout("List")
     BloodGroup:SetTitle(bufname)
     BloodGroup:SetWidth(32*SCALE_LENGTH)
-    BloodGroup:SetHeight(17*SCALE_LENGTH)
+    BloodGroup:SetHeight(20*SCALE_LENGTH)
     BloodGroup.noAutoHeight = true
+
+
+    local NotifyGroupButton = AceGUI:Create("Button")
+    NotifyGroupButton:SetText("通报")
+    NotifyGroupButton:SetWidth(10*SCALE_LENGTH)
+    BloodGroup:AddChild(NotifyGroupButton)
 
     local DropdownArray = {}
 
@@ -469,7 +476,7 @@ function BWMainWindow:CreateButtonGroup()
 
     local RestButton = AceGUI:Create("Button")
     RestButton:SetText("初始化")
-    RestButton:SetWidth(10*SCALE_LENGTH)
+    RestButton:SetWidth(8*SCALE_LENGTH)
     ButtonGroup:AddChild(RestButton)
     BWMainWindow.Buttons.RestButton = RestButton
 
@@ -482,7 +489,7 @@ function BWMainWindow:CreateButtonGroup()
 
     local NotifyButton = AceGUI:Create("Button")
     NotifyButton:SetText("通报")
-    NotifyButton:SetWidth(10*SCALE_LENGTH)
+    NotifyButton:SetWidth(8*SCALE_LENGTH)
     ButtonGroup:AddChild(NotifyButton)
     BWMainWindow.Buttons.NotifyButton = NotifyButton
 
@@ -495,7 +502,7 @@ function BWMainWindow:CreateButtonGroup()
 
     local CheckButton = AceGUI:Create("Button")
     CheckButton:SetText("检查")
-    CheckButton:SetWidth(10*SCALE_LENGTH)
+    CheckButton:SetWidth(8*SCALE_LENGTH)
     ButtonGroup:AddChild(CheckButton)
     BWMainWindow.Buttons.CheckButton = CheckButton
 
@@ -503,9 +510,16 @@ function BWMainWindow:CreateButtonGroup()
     local MonitorButton = AceGUI:Create("Button")
     MonitorButton:SetText("开启自动检查")
     BWMainWindow:ChangeFontSize(MonitorButton.text,12)
-    MonitorButton:SetWidth(15*SCALE_LENGTH)
+    MonitorButton:SetWidth(12*SCALE_LENGTH)
     ButtonGroup:AddChild(MonitorButton)
     BWMainWindow.Buttons.MonitorButton = MonitorButton
+    
+    local TextButton = AceGUI:Create("Button")
+    TextButton:SetText("文字版")
+    TextButton:SetWidth(8*SCALE_LENGTH)
+    ButtonGroup:AddChild(TextButton)
+    TextButton:SetCallback("OnClick", BWMainWindow.OnTextButtonClick)
+    BWMainWindow.Buttons.TextButton = TextButton
 
     return ButtonGroup
 end
@@ -513,6 +527,14 @@ end
 
 function BWMainWindow:OnCheckConfigButtonClick()
     _G.BWCheckPlayerWindow:Show()
+end
+
+
+function BWMainWindow:OnTextButtonClick()
+    _G.BWTextWindow:Show()
+    local allocate_result = BWMainWindow:GetAllAllocation()
+	local raidNotify,personNotify = BWMainWindow:GetNotifyInfo()
+	Notifier:NotifyToGrid(allocate_result,raidNotify,personNotify)
 end
 
 -- 设置检查通知按钮值
@@ -712,12 +734,13 @@ function BWMainWindow:SetShortFrameCheckBox(value)
     BWMainWindow.Config.ShortFrameCheckbox:SetValue(value)
 end
 
-function BWMainWindow:RegistButtonCallBack(InitCallback,NotifyCallback,AllocateCallback,CheckCallback,MonitorCallback)
+function BWMainWindow:RegistButtonCallBack(InitCallback,NotifyCallback,AllocateCallback,CheckCallback,MonitorCallback,TextCallback)
     BWMainWindow.Buttons.RestButton:SetCallback("OnClick", InitCallback)
     BWMainWindow.Buttons.NotifyButton:SetCallback("OnClick", NotifyCallback)
     BWMainWindow.Buttons.AllocateButton:SetCallback("OnClick", AllocateCallback)
     BWMainWindow.Buttons.CheckButton:SetCallback("OnClick", CheckCallback)
     BWMainWindow.Buttons.MonitorButton:SetCallback("OnClick", MonitorCallback)
+    BWMainWindow.Buttons.TextButton:SetCallback("OnClick", TextCallback)
 end
 
 function BWMainWindow:RegistNotifyBoxCallBack(NotifyBoxCallBack)
