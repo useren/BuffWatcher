@@ -162,6 +162,94 @@ function Notifier:NotifyToGrid(allcate_data,raidNotify,personNotify)
     -- end
 end
 
+
+function Notifier:GenerateTextToGrid(allcate_data,raidNotify,personNotify)
+    local result = ""
+
+    local SendChannel = "RAID"  -- 团队
+    --local SendChannel = "GUILD" -- 公会
+
+    local result_by_name = Notifier:TransAllocationResultToByName(allcate_data)
+
+    -- result_by_name的结果是name做key的，按照name排序，这样会出现通报中3队在前1队再后的情况，此函数再纠正一下
+    local function resort_by_group(array)
+        local result = {}
+        for name,groups in pairs(array) do
+            if(groups[1])then
+                table.insert(result,{["gn"]=groups[1],["name"]=name,["groups"]=groups})
+            end
+        end
+        table.sort(result,function(a,b)
+            return a.gn < b.gn
+        end)
+        return result
+    end
+
+
+    local allbuf = {
+        PriestBlood = "【MS耐力精神】",
+        --PriestSpirt = "精神",
+        MageIntelli = "【FS智力】",
+        DruidClaw   = "【XD爪子】",
+        Knight      = "【QS祝福】",
+        Warlock     = "【SS诅咒】"
+    }
+
+    local knight_to_cn = {["WangZhe"]="王者",["ZhengJiu"]="拯救",["GuangMing"]="光明",["LiLiang"]="力量",["BiHu"]="庇护",["ZhiHui"]="智慧"}
+    local warlock_to_cn = {["LuMang"]="鲁莽",["YuanSu"]="元素",["YuYan"]="语言",["AnYing"]="暗影"}
+
+
+    for bufe,bufc in pairs(allbuf) do
+        local str_to_raid = bufc
+        local sorted_array = resort_by_group(result_by_name[bufe])
+        local i = 1
+        local len = table.getn(sorted_array)
+        for _,ngarray in pairs(sorted_array) do
+            local name = ngarray["name"]
+            local garray = ngarray["groups"]
+            local str_to_player = "加Buff提示:" .. bufc
+            --str_to_raid = str_to_raid .. "[" ..name .. " -> "
+
+            local j = 1
+            local lenj = table.getn(garray)
+            for _,gname in pairs(garray) do
+                local rgname = ""
+                if(bufe == "Knight") then
+                    rgname = knight_to_cn[gname]
+                    if (j < lenj) then
+                        rgname = rgname .. "/"
+                    end
+                    j = j + 1
+                elseif(bufe == "Warlock") then
+                    rgname = warlock_to_cn[gname]
+                else
+                    rgname = gname
+                end
+                str_to_raid = str_to_raid .. rgname
+                str_to_player = str_to_player .. rgname
+            end
+            str_to_raid = str_to_raid .. "-" .. name
+            if (i < len) then
+                str_to_raid = str_to_raid .. "，"
+            end
+            i = i + 1
+            -- str_to_raid = str_to_raid .. "]"
+
+            --_G.SendChatMessage(str_to_player,"WHISPER",nil,name)
+            --_G.SendChatMessage(str_to_player,"SAY",nil,nil)
+
+            str_to_player = str_to_player .. "-" .. name
+        end
+
+        if (#sorted_array > 0) then
+            result = result .. "\n" .. str_to_raid
+        end
+        --_G.SendChatMessage(str_to_raid,"GUILD",nil,nil)
+    end
+    
+    return result
+end
+
 -- 通报buf缺少情况
 -- 1. 有对应责任人的，私聊对应责任人
 -- 2. 没有责任人的，在全团通报

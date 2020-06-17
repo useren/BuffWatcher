@@ -31,10 +31,12 @@ function BWTextWindow:CreateWindow()
 
     local editbox = AceGUI:Create("MultiLineEditBox")
     editbox:SetLabel("")
+    editbox:SetText("default")
     editbox:SetWidth(50*SCALE_LENGTH)
     editbox:SetHeight(50*SCALE_LENGTH)
     frame:AddChild(editbox)
 
+    BWTextWindow.editbox = editbox
     BWTextWindow.frame = frame
 end
 
@@ -44,4 +46,8 @@ end
 
 function BWTextWindow:Hide()
     BWTextWindow.frame:Hide()
+end
+
+function BWTextWindow:SetCopiableText(text)
+    BWTextWindow.editbox:SetText(text)
 end

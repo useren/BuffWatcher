@@ -534,7 +534,8 @@ function BWMainWindow:OnTextButtonClick()
     _G.BWTextWindow:Show()
     local allocate_result = BWMainWindow:GetAllAllocation()
 	local raidNotify,personNotify = BWMainWindow:GetNotifyInfo()
-	Notifier:NotifyToGrid(allocate_result,raidNotify,personNotify)
+	local text = Notifier:GenerateTextToGrid(allocate_result,raidNotify,personNotify)
+    _G.BWTextWindow:SetCopiableText(text)
 end
 
 -- 设置检查通知按钮值
