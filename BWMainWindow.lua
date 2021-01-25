@@ -534,8 +534,22 @@ function BWMainWindow:OnTextButtonClick()
     _G.BWTextWindow:Show()
     local allocate_result = BWMainWindow:GetAllAllocation()
 	local raidNotify,personNotify = BWMainWindow:GetNotifyInfo()
-	local text = Notifier:GenerateTextToGrid(allocate_result,raidNotify,personNotify)
-    _G.BWTextWindow:SetCopiableText(text)
+    local text = Notifier:GenerateTextToGrid(allocate_result,raidNotify,personNotify)
+    
+    local textNames = ""
+    local RaidInfo = _G.RaidInfo
+    RaidInfo:LoadAllMember()
+    local players = {}
+	for gn,gp in pairs(RaidInfo.ByGroup) do
+		players[gn] = gp.players
+    end
+    for i = 1,8 do
+        for name,p in pairs(players[i]) do
+            textNames = textNames .. name .. "\n"
+        end
+    end
+
+    _G.BWTextWindow:SetCopiableText(text, textNames)
 end
 
 -- 设置检查通知按钮值

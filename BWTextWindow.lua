@@ -33,10 +33,18 @@ function BWTextWindow:CreateWindow()
     editbox:SetLabel("")
     editbox:SetText("default")
     editbox:SetWidth(50*SCALE_LENGTH)
-    editbox:SetHeight(50*SCALE_LENGTH)
+    editbox:SetHeight(20*SCALE_LENGTH)
     frame:AddChild(editbox)
 
+    local editboxNames = AceGUI:Create("MultiLineEditBox")
+    editboxNames:SetLabel("")
+    editboxNames:SetText("default")
+    editboxNames:SetWidth(50*SCALE_LENGTH)
+    editboxNames:SetHeight(30*SCALE_LENGTH)
+    frame:AddChild(editboxNames)
+
     BWTextWindow.editbox = editbox
+    BWTextWindow.editboxNames = editboxNames
     BWTextWindow.frame = frame
 end
 
@@ -48,6 +56,7 @@ function BWTextWindow:Hide()
     BWTextWindow.frame:Hide()
 end
 
-function BWTextWindow:SetCopiableText(text)
+function BWTextWindow:SetCopiableText(text, textNames)
     BWTextWindow.editbox:SetText(text)
+    BWTextWindow.editboxNames:SetText(textNames)
 end
